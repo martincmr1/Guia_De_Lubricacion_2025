@@ -43,6 +43,15 @@
         }
 
         /* Estilo de los selects */
+        .select-container {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            flex-wrap: wrap; /* Permitir ajuste automático en pantallas pequeñas */
+        }
+
         select {
             background: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
             border: 2px solid rgba(255, 255, 255, 0.3); /* Borde claro */
@@ -68,14 +77,6 @@
         select option {
             background: black; /* Fondo negro */
             color: white; /* Texto blanco */
-        }
-
-        /* Contenedor de selects */
-        .select-container {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin-bottom: 30px;
         }
 
         /* Cards */
@@ -117,15 +118,20 @@
             flex: 0 0 calc(33.333% - 20px); /* 3 tarjetas por fila con margen */
         }
 
-        @media (max-width: 768px) {
-            .row-cols-3 > * {
-                flex: 0 0 calc(50% - 20px); /* 2 tarjetas por fila en pantallas pequeñas */
-            }
-        }
-
+        /* Media Query para pantallas pequeñas */
         @media (max-width: 576px) {
+            .select-container {
+                flex-direction: column; /* Los selects se apilan en una columna */
+                align-items: center; /* Centrar los selects */
+            }
+
+            select {
+                width: 90%; /* Ancho completo en pantallas pequeñas */
+                margin-bottom: 15px; /* Espacio entre selects */
+            }
+
             .row-cols-3 > * {
-                flex: 0 0 100%; /* 1 tarjeta por fila en pantallas muy pequeñas */
+                flex: 0 0 100%; /* 1 tarjeta por fila */
             }
         }
     </style>
