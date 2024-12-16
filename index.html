@@ -141,8 +141,11 @@
 
         <!-- Contenedor de selects -->
         <div class="select-container">
-            <select id="marca-select" onchange="mostrarModelos()">
+            <select id="marca-select" onchange="mostrarCombustibles()">
                 <option value="">Marca</option>
+            </select>
+            <select id="combustible-select" onchange="mostrarModelos()">
+                <option value="">Combustible</option>
             </select>
             <select id="modelo-select" onchange="mostrarDetalles()">
                 <option value="">Modelo</option>
@@ -169,9 +172,10 @@
 
         // Función para cargar las marcas en el select
         function cargarMarcas() {
-            const marcas = [...new Set(datosAutomotriz.map(item => item.MARCA))];
-            const select = document.getElementById('marca-select');
+            const marcas = [...new Set(datosAutomotriz.map(item => item.MARCA))]
+                .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
 
+            const select = document.getElementById('marca-select');
             marcas.forEach(marca => {
                 const option = document.createElement('option');
                 option.value = marca;
@@ -180,12 +184,34 @@
             });
         }
 
-        // Función para mostrar los modelos según la marca seleccionada
+        // Función para mostrar los combustibles según la marca seleccionada
+        function mostrarCombustibles() {
+            const marcaSeleccionada = document.getElementById('marca-select').value;
+            const combustibles = [...new Set(
+                datosAutomotriz
+                    .filter(item => item.MARCA === marcaSeleccionada)
+                    .map(item => item.MOTOR)
+            )].sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
+
+            const combustibleSelect = document.getElementById('combustible-select');
+            combustibleSelect.innerHTML = '<option value="">Combustible</option>';
+
+            combustibles.forEach(combustible => {
+                const option = document.createElement('option');
+                option.value = combustible;
+                option.textContent = combustible;
+                combustibleSelect.appendChild(option);
+            });
+        }
+
+        // Función para mostrar los modelos según la marca y el combustible seleccionados
         function mostrarModelos() {
             const marcaSeleccionada = document.getElementById('marca-select').value;
+            const combustibleSeleccionado = document.getElementById('combustible-select').value;
             const modelos = datosAutomotriz
-                .filter(item => item.MARCA === marcaSeleccionada)
-                .map(item => item.MODELO);
+                .filter(item => item.MARCA === marcaSeleccionada && item.MOTOR === combustibleSeleccionado)
+                .map(item => item.MODELO)
+                .sort((a, b) => a.localeCompare(b, 'es', { sensitivity: 'base' }));
 
             const modeloSelect = document.getElementById('modelo-select');
             modeloSelect.innerHTML = '<option value="">Modelo</option>';
@@ -207,25 +233,16 @@
             container.innerHTML = ''; // Limpiar contenido previo
 
             if (detalles) {
+                // Tarjetas de Lubricantes y Filtros
                 crearCard(container, "Lubricante", detalles.LUBRICANTE, detalles["FOTOLUBRI"], `Litros a usar: ${detalles["LITROS A USAR"] || 'N/A'}`);
                 crearCard(container, "Filtro de Aceite MANN", detalles["FILTRO DE ACEITE MANN"], detalles["FOTOACEITEMANN"], "");
-                crearCard(container, "Filtro de Aceite MANN", detalles["FILTRO DE ACEITE MANN2"], detalles["FOTOACEITEMANN2"], "");
                 crearCard(container, "Filtro de Aire MANN", detalles["FILTRO DE AIRE MANN"], detalles["FOTOAIREMANN"], "");
-                crearCard(container, "Filtro de Aire MANN", detalles["FILTRO DE AIRE MANN2"], detalles["FOTOAIREMANN2"], "");
                 crearCard(container, "Filtro de Combustible MANN", detalles["FILTRO DE NAFTA MANN"], detalles["FOTONAFTAMANN"], "");
-                crearCard(container, "Filtro de Combustible MANN", detalles["FILTRO DE NAFTA MANN2"], detalles["FOTONAFTAMANN2"], "");
                 crearCard(container, "Filtro de Habitáculo MANN", detalles["FILTRO HABITACULO MANN"], detalles["FOTOHABITACUL MANN"], "");
-                crearCard(container, "Filtro de Habitáculo MANN", detalles["FILTRO HABITACULO MANN2"], detalles["FOTOHABITACUL MANN2"], "");
-
                 crearCard(container, "Filtro de Aceite FRAM", detalles["FILTRO DE ACEITE FRAM"], detalles["FOTOACEITEFRAM"], "");
-                crearCard(container, "Filtro de Aceite FRAM", detalles["FILTRO DE ACEITE FRAM2"], detalles["FOTOACEITEFRAM2"], "");
                 crearCard(container, "Filtro de Aire FRAM", detalles["FILTRO DE AIRE FRAM"], detalles["FOTOAIREFRAM"], "");
-                crearCard(container, "Filtro de Aire FRAM", detalles["FILTRO DE AIRE FRAM2"], detalles["FOTOAIREFRAM2"], "");
                 crearCard(container, "Filtro de Combustible FRAM", detalles["FILTRO DE NAFTA FRAM"], detalles["FOTONAFTAFRAM"], "");
-                crearCard(container, "Filtro de Combustible FRAM", detalles["FILTRO DE NAFTA FRAM2"], detalles["FOTONAFTAFRAM2"], "");
-                crearCard(container, "Filtro de Habitáculo FRAM", detalles["FILTRO HABITACULO FRAM"], detalles["FOTOHABITACULFRAM"], "");  
-                
-                crearCard(container, "Filtro de Habitáculo FRAM", detalles["FILTRO HABITACULO FRAM2"], detalles["FOTOHABITACULFRAM2"], "");
+                crearCard(container, "Filtro de Habitáculo FRAM", detalles["FILTRO HABITACULO FRAM"], detalles["FOTOHABITACULFRAM"], "");
             }
         }
 
